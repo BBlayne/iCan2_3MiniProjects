@@ -10,7 +10,6 @@ using System.Collections;
 [RequireComponent(typeof (Animator))]
 [RequireComponent(typeof (CapsuleCollider))]
 [RequireComponent(typeof (Rigidbody))]
-
 public class UnityChanControlScriptWithRgidBody : MonoBehaviour
 {
 
@@ -89,10 +88,12 @@ public class UnityChanControlScriptWithRgidBody : MonoBehaviour
 			velocity *= backwardSpeed;	// 移動速度を掛ける
 		}
 		
-		if (Input.GetButtonDown("Jump")) {	// スペースキーを入力したら
+		if (Input.GetButtonDown("Jump")) {  // スペースキーを入力したら
 
-			//アニメーションのステートがLocomotionの最中のみジャンプできる
-			if (currentBaseState.nameHash == locoState){
+            //アニメーションのステートがLocomotionの最中のみジャンプできる
+            //if (currentBaseState.nameHash == locoState)
+            if (currentBaseState.fullPathHash == locoState)
+            {
 				//ステート遷移中でなかったらジャンプできる
 				if(!anim.IsInTransition(0))
 				{
@@ -107,21 +108,24 @@ public class UnityChanControlScriptWithRgidBody : MonoBehaviour
 		transform.localPosition += velocity * Time.fixedDeltaTime;
 
 		// 左右のキー入力でキャラクタをY軸で旋回させる
-		transform.Rotate(0, h * rotateSpeed, 0);	
-	
+		transform.Rotate(0, h * rotateSpeed, 0);
 
-		// 以下、Animatorの各ステート中での処理
-		// Locomotion中
-		// 現在のベースレイヤーがlocoStateの時
-		if (currentBaseState.nameHash == locoState){
+
+        // 以下、Animatorの各ステート中での処理
+        // Locomotion中
+        // 現在のベースレイヤーがlocoStateの時
+        //if (currentBaseState.nameHash == locoState)
+        if (currentBaseState.fullPathHash == locoState)
+        {
 			//カーブでコライダ調整をしている時は、念のためにリセットする
 			if(useCurves){
 				resetCollider();
 			}
 		}
-		// JUMP中の処理
-		// 現在のベースレイヤーがjumpStateの時
-		else if(currentBaseState.nameHash == jumpState)
+        // JUMP中の処理
+        // 現在のベースレイヤーがjumpStateの時
+        else if (currentBaseState.fullPathHash == jumpState)
+        //else if(currentBaseState.nameHash == jumpState)
 		{
 			cameraObject.SendMessage("setCameraPositionJumpView");	// ジャンプ中のカメラに変更
 			// ステートがトランジション中でない場合
@@ -160,9 +164,10 @@ public class UnityChanControlScriptWithRgidBody : MonoBehaviour
 				anim.SetBool("Jump", false);
 			}
 		}
-		// IDLE中の処理
-		// 現在のベースレイヤーがidleStateの時
-		else if (currentBaseState.nameHash == idleState)
+        // IDLE中の処理
+        // 現在のベースレイヤーがidleStateの時
+        //else if (currentBaseState.nameHash == idleState)
+        else if (currentBaseState.fullPathHash == idleState)
 		{
 			//カーブでコライダ調整をしている時は、念のためにリセットする
 			if(useCurves){
@@ -173,9 +178,10 @@ public class UnityChanControlScriptWithRgidBody : MonoBehaviour
 				anim.SetBool("Rest", true);
 			}
 		}
-		// REST中の処理
-		// 現在のベースレイヤーがrestStateの時
-		else if (currentBaseState.nameHash == restState)
+        // REST中の処理
+        // 現在のベースレイヤーがrestStateの時
+        //else if (currentBaseState.nameHash == restState)
+        else if (currentBaseState.fullPathHash == restState)
 		{
 			//cameraObject.SendMessage("setCameraPositionFrontView");		// カメラを正面に切り替える
 			// ステートが遷移中でない場合、Rest bool値をリセットする（ループしないようにする）
